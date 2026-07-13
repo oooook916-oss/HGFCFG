@@ -1,0 +1,22 @@
+/* Minimap */
+
+#minimap-container {
+    position: absolute;
+    /* Size and position set dynamically by minimap.ts */
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    user-select: none;
+    pointer-events: none;
+    z-index: 100;
+    overflow: hidden;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transform-origin: bottom right;
+}
+
+#minimap {
+    display: block;
+    width: 100%;
+    height: 100%;
+}

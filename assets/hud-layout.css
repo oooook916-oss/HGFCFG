@@ -1,0 +1,152 @@
+.hud-bottom-left {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+    align-items: flex-start;
+    pointer-events: none;
+    z-index: 50;
+
+    transform-origin: bottom left;
+    transform: scale(var(--scale, 1));
+}
+
+.hud-bottom-center {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%) scale(var(--scale, 1));
+    transform-origin: bottom center;
+
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+
+    pointer-events: none;
+    z-index: 50;
+}
+
+.stat-badge {
+    background-color: rgba(0, 0, 0, 0.85);
+    padding: 6px 10px;
+    border-radius: 4px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    pointer-events: all;
+}
+
+.hud-reconnect-btn {
+    color: #606060;
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+    font-size: 14px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+}
+
+.hud-reconnect-btn:hover {
+    color: #707070;
+    transform: rotate(30deg);
+}
+
+.stat-divider {
+    width: 1px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.countdown-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    text-align: center;
+    pointer-events: none;
+}
+
+.countdown-icon {
+    font-size: 64px;
+    color: #606060;
+    margin-bottom: 20px;
+    text-shadow: 0 0 30px rgba(255, 68, 68, 0.8);
+    animation: pulse-icon 1s ease-in-out infinite;
+}
+
+.countdown-text {
+    font-size: 32px;
+    font-weight: 700;
+    color: #606060;
+    text-shadow: 0 0 20px rgba(255, 68, 68, 0.8);
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    animation: pulse-text 1s ease-in-out infinite;
+}
+
+.countdown-number {
+    font-size: 120px;
+    font-weight: 900;
+    color: #606060;
+    text-shadow: 0 0 40px rgba(255, 68, 68, 1);
+    animation: pulse-number 1s ease-in-out infinite;
+}
+
+@keyframes pulse-icon {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1) rotate(5deg);
+    }
+}
+
+@keyframes pulse-text {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes pulse-number {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+.hud-bottom-left>* {
+    pointer-events: all;
+    position: relative;
+    bottom: auto;
+    left: auto;
+}
