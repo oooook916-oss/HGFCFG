@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProtonX ...</title>
+    <link id="favicon" rel="icon" type="image/png" href="./assets/images/favicon.png">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/update-notifier.css">
+    <link rel="stylesheet" href="assets/css/skins.css">
+    <link rel="stylesheet" href="assets/css/bot-client.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700;800&display=swap">
+
+      <!-- ── ZERO Loading Screen ── -->
+      <style id="protonx-loading-style">
+        #protonx-loading {
+          position: fixed; inset: 0; z-index: 9999999;
+          background: linear-gradient(135deg, #0a0a0f 0%, #15151f 25%, #1a1a28 50%, #0f0f18 75%, #080810 100%);
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center;
+          font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+          opacity: 1; transition: opacity 0.7s ease;
+          overflow: hidden;
+        }
+        
+        #protonx-loading::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background-image: 
+            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+          background-size: 50px 50px;
+          animation: grid-move 20s linear infinite;
+        }
+        
+        #protonx-loading::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 600px;
+          height: 600px;
+          background: radial-gradient(circle, rgba(180,180,200,0.08) 0%, transparent 70%);
+          pointer-events: none;
+        }
+        
+        @keyframes grid-move {
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(50px, 50px); }
+        }
+        
+        #protonx-loading.protonx-fade-out { opacity: 0; pointer-events: none; }
+
+        .protonx-loading-logo {
+          position: relative;
+          z-index: 10;
+          margin-bottom: 30px;
+        }
+        
+        .protonx-logo-text {
+          font-size: 96px;
+          font-weight: 800;
+          letter-spacing: 12px;
+          background: linear-gradient(180deg, 
+            #ffffff 0%, 
+            #e8e8f0 20%, 
+            #c8c8d8 40%, 
+            #9898a8 60%, 
+            #707080 80%, 
+            #505060 100%
+          );
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          filter: drop-shadow(0 0 20px rgba(160,160,180,0.5)) 
+                    drop-shadow(0 4px 8px rgba(0,0,0,0.8));
+          animation: logo-float 3s ease-in-out infinite;
+        }
+        
+        .protonx-logo-sub {
+          font-size: 14px;
+          font-weight: 500;
+          letter-spacing: 8px;
+          color: rgba(180,180,200,0.6);
+          text-align: center;
+          margin-top: -5px;
+        }
+        
+        @keyframes logo-float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px); }
+        }
+
+        .protonx-accent-lines {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          pointer-events: none;
+          overflow: hidden;
+        }
+        
+        .protonx-accent-line {
+          position: absolute;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(180,180,200,0.3), transparent);
+          animation: line-scan 4s ease-in-out infinite;
+        }
+        
+        .protonx-accent-line:nth-child(1) { top: 30%; width: 40%; left: -10%; animation-delay: 0s; }
+        .protonx-accent-line:nth-child(2) { top: 70%; width: 35%; right: -10%; left: auto; animation-delay: 1s; }
+        .protonx-accent-line:nth-child(3) { top: 45%; width: 25%; right: -5%; left: auto; animation-delay: 2s; }
+        
+        @keyframes line-scan {
+          0%, 100% { opacity: 0.2; transform: translateX(0); }
+          50% { opacity: 0.6; transform: translateX(20px); }
+        }
+
+        .protonx-loading-label {
+          position: relative;
+          z-index: 10;
+          margin-top: 20px;
+          font-size: 13px;
+          font-weight: 500;
+          letter-spacing: 6px;
+          color: rgba(200,200,215,0.7);
+          animation: protonx-lbl-blink 1.5s ease-in-out infinite;
+        }
+        @keyframes protonx-lbl-blink {
+          0%,100% { opacity: 0.35; } 50% { opacity: 1; }
+        }
+
+        .protonx-bar-wrap {
+          position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%);
+          width: 380px; max-width: 70vw;
+        }
+        .protonx-bar-track {
+          height: 2px; background: rgba(150,150,170,0.1);
+          border-radius: 2px; overflow: hidden;
+        }
+        .protonx-bar-fill {
+          height: 100%; width: 0%; border-radius: 2px;
+          background: linear-gradient(90deg, 
+            #606070 0%, 
+            #909098 25%, 
+            #b0b0c0 50%, 
+            #c8c8d8 75%, 
+            #e0e0f0 100%
+          );
+          animation: protonx-bar-grow 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation-delay: 0.3s;
+          box-shadow: 0 0 8px rgba(180,180,200,0.4);
+        }
+        @keyframes protonx-bar-grow { from { width: 0%; } to { width: 100%; } }
+
+        .protonx-bar-pct {
+          margin-top: 9px; text-align: right;
+          color: rgba(160,160,180,0.5); font-size: 10px; letter-spacing: 2px;
+          font-family: 'Rajdhani', monospace;
+        }
+      </style>
+</head>
+
+<body>
+      
+            
+      <div id="protonx-loading">
+        <div class="protonx-accent-lines">
+          <div class="protonx-accent-line"></div>
+          <div class="protonx-accent-line"></div>
+          <div class="protonx-accent-line"></div>
+        </div>
+
+        <div class="protonx-loading-logo">
+          <div class="protonx-logo-text">ZERO</div>
+          <div class="protonx-logo-sub">CLIENT</div>
+        </div>
+
+        <div class="protonx-loading-label">Loading</div>
+
+        <div class="protonx-bar-wrap">
+          <div class="protonx-bar-track">
+            <div class="protonx-bar-fill" id="protonx-bar-fill"></div>
+          </div>
+          <div class="protonx-bar-pct" id="protonx-bar-pct">0%</div>
+        </div>
+      </div>
+      <script>
+      (function () {
+        var DURATION = 5000;
+        var DELAY    = 200;
+        var start    = performance.now();
+        function updatePct() {
+          var el      = document.getElementById('protonx-bar-pct');
+          var elapsed = Math.max(0, performance.now() - start - DELAY);
+          var pct     = Math.min(Math.round((elapsed / DURATION) * 100), 100);
+          if (el) el.textContent = pct + '%';
+          if (pct < 100) requestAnimationFrame(updatePct);
+        }
+        requestAnimationFrame(updatePct);
+        setTimeout(function () {
+          var ov = document.getElementById('protonx-loading');
+          if (!ov) return;
+          ov.classList.add('protonx-fade-out');
+          setTimeout(function () { if (ov && ov.parentNode) ov.remove(); }, 750);
+        }, 6350);
+      })();
+      </script>
+    <div class="fullscreen-root">
+        <canvas class="game-canvas" id="gameCanvas"></canvas>
+
+    <div id="hud-leaderboard" class="hud-leaderboard">
+    <div class="lb-header">ProtonX</div>
+    <div class="lb-content">
+            </div>
+        </div>
+
+        <div id="hud-bottom-left" class="hud-bottom-left">
+            <div id="chat-container" class="chat-container">
+                <div class="chat-resize-handle" id="chat-resize"></div>
+                <div class="chat-messages" id="chat-messages">
+                </div>
+            </div>
+        </div>
+
+        <div id="hud-bottom-center" class="hud-bottom-center">
+            <div id="stats-hud" class="stats-hud"></div>
+            <div id="hud-server-timer" class="stat-badge server-timer-badge">
+                <span>FFA EUROPE - 00h 00m 00s</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="chat-input-container" class="chat-input-container">
+        <div id="emoji-picker" class="emoji-picker"></div>
+        <input type="text" id="chat-input" class="chat-input-field" name="chatmessage"
+            placeholder="Press Enter to Chat..." maxlength="100" autocomplete="off" autocorrect="off"
+            autocapitalize="off" spellcheck="false" data-form-type="other" data-lpignore="true">
+        <div id="emoji-toggle" class="emoji-toggle">
+            <i class="fa-solid fa-face-smile"></i>
+        </div>
+    </div>
+
+    <div id="minimap-container">
+        <canvas id="minimap" width="0" height="0"></canvas>
+    </div>
+
+    <div id="pause-hud" class="pause-hud" style="display: none;">
+        <i class="fa-solid fa-pause"></i>
+        PAUSED
+    </div>
+
+    <div id="countdown-overlay" class="countdown-overlay" style="display: none;">
+        <i class="fa-solid fa-clock countdown-icon"></i>
+        <div class="countdown-text">SERVER RESTARTING IN</div>
+        <div class="countdown-number">10</div>
+    </div>
+
+    <div class="lobby-overlay">
+        <div class="lobby-menu">
+            <div class="lobby-menu-bar">
+                <button class="menu-btn btn-settings">
+                    <div class="btn-content">
+                        <i class="fa-solid fa-gear"></i><span>Settings</span>
+                    </div>
+                </button>
+
+                <div class="menu-center">
+                    <div class="center-content-wrapper">
+                        <div class="skin-left" style="background-image: url('https://i.imgur.com/S2Gu3R2.png');">
+                        </div>
+                        <div class="skin-right" style="background-image: url('https://i.imgur.com/S2Gu3R2.png');">
+                        </div>
+                    </div>
+                </div>
+
+                <button class="menu-btn btn-play">
+                    <div class="btn-content">
+                        <i class="fa-solid fa-gamepad"></i><span>Play</span>
+                    </div>
+                </button>
+
+                <button class="menu-btn btn-spectate">
+                    <div class="btn-content">
+                        <i class="fa-solid fa-eye"></i><span>Spectate</span>
+                    </div>
+                </button>
+
+                <button class="menu-btn btn-reconnect-menu">
+                    <div class="btn-content">
+                        <i class="fa-solid fa-rotate-right"></i><span>Reconnect</span>
+                    </div>
+                </button>
+
+                <button class="menu-btn btn-skins">
+                    <div class="btn-content">
+                        <i class="fa-solid fa-images"></i><span>Skins</span>
+                    </div>
+                </button>
+            </div>
+
+            <div class="profile-selector-bar">
+                <div class="profile-slot active" data-profile="1">1</div>
+                <div class="profile-slot" data-profile="2">2</div>
+                <div class="profile-slot" data-profile="3">3</div>
+                <div class="profile-slot" data-profile="4">4</div>
+                <div class="profile-slot" data-profile="5">5</div>
+                <div class="profile-slot" data-profile="6">6</div>
+                <div class="profile-slot" data-profile="7">7</div>
+                <div class="profile-slot" data-profile="8">8</div>
+                <div class="profile-slot" data-profile="9">9</div>
+                <div class="profile-slot" data-profile="10">10</div>
+            </div>
+
+            <div class="profile-inputs-wrapper">
+                <button class="profile-nav-arrow arrow-left">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+
+                <div class="lobby-inputs-container">
+                    <div class="input-row">
+                        <input type="text" placeholder="Tag" class="lobby-input input-tag" maxlength="5">
+                        <input type="text" placeholder="Player 1" class="lobby-input input-p1" maxlength="15">
+                        <input type="text" placeholder="Player 2" class="lobby-input input-p2" maxlength="15">
+                    </div>
+                    <div class="input-row">
+                        <input type="text" placeholder="Skin URL 1" class="lobby-input input-skin1">
+                        <input type="text" placeholder="Skin URL 2" class="lobby-input input-skin2">
+                    </div>
+                    <div class="input-row">
+                        <div class="server-select-container">
+                            <div class="server-select-trigger">
+                                <span class="selected-text">FFA - EUROPE</span>
+                                <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                            </div>
+                            <div class="server-options">
+                                <div class="server-option selected" data-value="wss://eu.senpa.io:2001">FFA - EUROPE</div>
+                                <div class="server-option" data-value="wss://us.senpa.io:2001">FFA - NA</div>
+                                <div class="server-option" data-value="wss://asia.senpa.io:2001">FFA - Asia </div>
+                                <div class="server-option" data-value="wss://eu.senpa.io:1200">Dual - EU </div>
+                                <div class="server-option" data-value="wss://asia.senpa.io:1001">Dual - Asia</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <button class="profile-nav-arrow arrow-right">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="reconnect-overlay" id="reconnectOverlay">
+        <div class="reconnect-box">
+            <div class="reconnect-title">Disconnected</div>
+            <div class="reconnect-message">Connection to the server was lost</div>
+            <div class="reconnect-spinner"></div>
+            <div class="reconnect-actions">
+                <button class="reconnect-btn btn-reconnect-action" id="btnReconnect">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Reconnect</span>
+                </button>
+                <button class="reconnect-btn btn-menu-action" id="btnMenu">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Return to Menu</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-overlay" id="settingsOverlay">
+        <div class="settings-modal">
+            <div class="settings-body">
+                <div class="settings-sidebar">
+                    <button class="tab-btn active" data-tab="game"><i class="fa-solid fa-gamepad"></i> Game</button>
+                    <button class="tab-btn" data-tab="camera"><i class="fa-solid fa-video"></i> Camera</button>
+                    <button class="tab-btn" data-tab="theme"><i class="fa-solid fa-palette"></i> Theme</button>
+                    <button class="tab-btn" data-tab="elements"><i class="fa-solid fa-shapes"></i> Elements</button>
+                    <button class="tab-btn" data-tab="huds"><i class="fa-solid fa-layer-group"></i> HUDs</button>
+                    <button class="tab-btn" data-tab="chat"><i class="fa-solid fa-comment"></i> Chat</button>
+                    <button class="tab-btn" data-tab="controls"><i class="fa-solid fa-keyboard"></i> Controls</button>
+                </div>
+
+                <div class="settings-content" id="settingsContent">
+                </div>
+            </div>
+
+            <div class="settings-footer">
+                <div style="flex: 1; display: flex; gap: 10px;">
+                    <button class="settings-action-btn" id="btnExport">Export</button>
+                    <button class="settings-action-btn" id="btnImport">Import</button>
+                    <button class="settings-action-btn btn-danger" id="btnResetAll">Reset</button>
+                    <input type="file" id="importFile" style="display: none" accept=".json">
+                </div>
+                <button class="close-settings-btn" id="closeSettingsBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="skins-overlay" id="skinsOverlay">
+        <div class="skins-modal">
+            <div class="skins-header">
+                <div class="skins-title">
+                    <i class="fa-solid fa-images"></i> Skin Library
+                </div>
+                <button class="skins-close-btn" id="btnCloseSkins">×</button>
+            </div>
+            <div class="skins-body">
+                <div class="skins-sidebar" id="skinsCategories">
+                </div>
+                <div class="skins-content" id="skinsContent">
+                </div>
+            </div>
+        </div>
+
+        <div class="skin-selection-popup" id="skinSelectionPopup">
+            <div class="skin-preview-large" id="skinPopupPreview"></div>
+            <button class="popup-btn primary" id="btnSetSkinPrimary">
+                <i class="fa-solid fa-1"></i> Set Primary
+            </button>
+            <button class="popup-btn secondary" id="btnSetSkinSecondary">
+                <i class="fa-solid fa-2"></i> Set Secondary
+            </button>
+            <button class="popup-btn cancel" id="btnCancelSkin">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <div id="update-notifier-overlay" class="update-notifier-overlay">
+        <div class="update-notifier-modal">
+            <div class="update-notifier-header">
+                <button id="update-notifier-close" class="update-notifier-close">×</button>
+                <h2 class="update-notifier-title">🎉 What's New</h2>
+                <div class="update-notifier-version" id="update-notifier-version">v1.0.0</div>
+                <div class="update-notifier-date" id="update-notifier-date">2026-01-13</div>
+            </div>
+            <div class="update-notifier-body">
+                <div id="update-notifier-content">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./wasmLoader.js"></script>
+    <script src="./bundle.js"></script>
+    <script src="./assets/js/bot-client.js"></script>
+
+    <script>
+    (function () {
+      var STORAGE_KEY = 'protonx_spawn_secondary_mouse';
+      var OPTIONS = ['none', '0', '1', '2'];
+      var LABELS  = { none: 'NONE', '0': 'LEFT', '1': 'MIDDLE', '2': 'RIGHT' };
+
+      function getBtn() { return localStorage.getItem(STORAGE_KEY) || 'none'; }
+      function setBtn(v) { localStorage.setItem(STORAGE_KEY, v); }
+
+      function getSecondary() {
+        var app = window.app;
+        if (!app || !app.dualConnectionHandler) return null;
+        var dc = app.dualConnectionHandler;
+        if (dc.secondary) return dc.secondary;
+        if (dc.clients) return dc.clients.find(function(c){ return c.type === 'Secondary'; }) || null;
+        return null;
+      }
+
+      /* ── Blue square indicator ── */
+      var indicator = document.createElement('div');
+      indicator.style.cssText = [
+        'position:fixed',
+        'width:36px',
+        'height:36px',
+        'border:3px solid #4fc3f7',
+        'background:rgba(79,195,247,0.08)',
+        'pointer-events:none',
+        'display:none',
+        'z-index:999998',
+        'transform:translate(-50%,-50%)',
+        'box-shadow:0 0 10px rgba(79,195,247,0.5)'
+      ].join(';');
+      document.body.appendChild(indicator);
+
+      var holding = false;
+      var mouseScreenX = 0;
+      var mouseScreenY = 0;
+      /* Lerped indicator position */
+      var indX = 0, indY = 0;
+      var rafId = null;
+      /* Throttle cursor sends to secondary: max every 50ms */
+      var lastSendTime = 0;
+
+      /* World coords: oyunun kendi stage.mouse değerini kullan (en doğru kaynak) */
+      function getWorldPos() {
+        try {
+          var stage = window.app && window.app.stage;
+          if (stage && stage.mouse &&
+              typeof stage.mouse.worldX === 'number' &&
+              typeof stage.mouse.worldY === 'number') {
+            return { x: stage.mouse.worldX, y: stage.mouse.worldY };
+          }
+          /* Yedek: kamera ile manuel hesap */
+          var cam = stage && stage.camera;
+          if (!cam || !cam.zoom) return null;
+          var cvs = document.querySelector('canvas');
+          var hw = cvs ? cvs.width  / 2 : window.innerWidth  / 2;
+          var hh = cvs ? cvs.height / 2 : window.innerHeight / 2;
+          var dpr = window.devicePixelRatio || 1;
+          return {
+            x: cam.x + (mouseScreenX * dpr - hw) / cam.zoom,
+            y: cam.y + (mouseScreenY * dpr - hh) / cam.zoom
+          };
+        } catch(e) { return null; }
+      }
+
+      function spawnRaf() {
+        if (!holding) return;
+        rafId = requestAnimationFrame(spawnRaf);
+
+        /* Lerp faktörü 0.07 — yavaş ama takip eden hareket */
+        indX += (mouseScreenX - indX) * 0.07;
+        indY += (mouseScreenY - indY) * 0.07;
+        indicator.style.left = indX + 'px';
+        indicator.style.top  = indY + 'px';
+
+        /* Throttle: 40ms'de bir cursor gönder */
+        var now = performance.now();
+        if (now - lastSendTime < 40) return;
+        lastSendTime = now;
+        var sec = getSecondary();
+        if (!sec) return;
+        var w = getWorldPos();
+        if (!w) return;
+        try { sec.sendCursorPosition(w.x, w.y); } catch(err) {}
+      }
+
+      document.addEventListener('mousemove', function(e) {
+        mouseScreenX = e.clientX;
+        mouseScreenY = e.clientY;
+      });
+
+      function startHolding(e) {
+        holding = true;
+        indX = e.clientX; indY = e.clientY;
+        indicator.style.left    = indX + 'px';
+        indicator.style.top     = indY + 'px';
+        indicator.style.display = 'block';
+        lastSendTime = 0;
+        if (rafId) cancelAnimationFrame(rafId);
+        spawnRaf();
+      }
+
+      function stopHolding() {
+        holding = false;
+        indicator.style.display = 'none';
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      }
+
+      document.addEventListener('mousedown', function(e) {
+        var btn = getBtn();
+        if (btn === 'none') return;
+        if (String(e.button) !== btn) return;
+        var sec = getSecondary();
+        if (!sec) return;
+        e.preventDefault();
+        startHolding(e);
+      });
+
+      document.addEventListener('mouseup', function(e) {
+        var btn = getBtn();
+        if (!holding || String(e.button) !== btn) return;
+        var sec = getSecondary();
+        var w   = getWorldPos();
+        stopHolding();
+        if (!sec || !w) return;
+        /* Pozisyonu 3 kez art arda gönder, sonra spawn */
+        try { sec.sendCursorPosition(w.x, w.y); } catch(e) {}
+        setTimeout(function() {
+          try { sec.sendCursorPosition(w.x, w.y); } catch(e) {}
+        }, 30);
+        setTimeout(function() {
+          try { sec.sendCursorPosition(w.x, w.y); } catch(e) {}
+          setTimeout(function() { try { sec.sendSpawn(); } catch(e) {} }, 30);
+        }, 60);
+      });
+
+      /* Pencere dışı çıkarsa iptal et */
+      document.addEventListener('mouseleave', function() {
+        if (holding) stopHolding();
+      });
+
+      /* ── Settings row injection ── */
+      function buildRow() {
+        var row = document.createElement('div');
+        row.id = 'protonx-spawn-secondary-row';
+        row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.07);';
+
+        var label = document.createElement('div');
+        label.className = 'setting-label';
+        label.textContent = 'SPAWN SECONDARY';
+
+        var idx = OPTIONS.indexOf(getBtn());
+        if (idx < 0) idx = 0;
+
+        var btn = document.createElement('button');
+        btn.className = 'keybind-btn';
+        btn.style.minWidth = '80px';
+        btn.textContent = LABELS[OPTIONS[idx]];
+        btn.addEventListener('click', function(ev) {
+          ev.stopPropagation();
+          idx = (idx + 1) % OPTIONS.length;
+          setBtn(OPTIONS[idx]);
+          btn.textContent = LABELS[OPTIONS[idx]];
+        });
+
+        row.appendChild(label);
+        row.appendChild(btn);
+        return row;
+      }
+
+      function tryInject() {
+        if (document.getElementById('protonx-spawn-secondary-row')) return;
+        var btns = document.querySelectorAll('.keybind-btn[data-action]');
+        if (!btns.length) return;
+        var first = btns[0];
+        var rowEl = first.parentElement;
+        var container = rowEl ? rowEl.parentElement : null;
+        if (!container) return;
+        container.appendChild(buildRow());
+      }
+
+      var observer = new MutationObserver(tryInject);
+      observer.observe(document.body, { childList: true, subtree: true });
+    })();
+    </script>
+
+    <script>
+    /* ── Arrow Rings ── */
+    (function () {
+      var AR_KEY = 'protonx_arrow_rings';
+      function arEnabled() { return localStorage.getItem(AR_KEY) !== '0'; }
+
+      /* Ok CSS şablonu */
+      var ARROW_CSS = [
+        'position:fixed',
+        'pointer-events:none',
+        'display:none',
+        'z-index:999997',
+        'width:0',
+        'height:0',
+        'border-left:10px solid transparent',
+        'border-right:10px solid transparent',
+        'border-top:18px solid rgba(255,255,255,0.92)',
+        'transform:translate(-50%,0)',
+        'filter:drop-shadow(0 0 4px rgba(255,255,255,0.6))'
+      ].join(';');
+
+      /* Ok havuzu — her hücre için bir ok */
+      var arPool = [];
+      /* Her ok için lerp pozisyonu */
+      var arLerp = [];
+
+      function getArrow(i) {
+        if (!arPool[i]) {
+          var el = document.createElement('div');
+          el.style.cssText = ARROW_CSS;
+          document.body.appendChild(el);
+          arPool[i] = el;
+          arLerp[i] = null;
+        }
+        return arPool[i];
+      }
+
+      function hideAllArrows() {
+        for (var i = 0; i < arPool.length; i++) {
+          arPool[i].style.display = 'none';
+        }
+      }
+
+      /* rAF loop: her hücre için ok güncelle */
+      function tick() {
+        requestAnimationFrame(tick);
+
+        if (!arEnabled()) { hideAllArrows(); return; }
+        var app = window.app;
+        if (!app || !app.dualConnectionHandler || !app.stage) { hideAllArrows(); return; }
+
+        var cur = app.dualConnectionHandler.current;
+        if (!cur || !cur.player || !cur.isAlive) { hideAllArrows(); return; }
+
+        var cam = app.stage.camera;
+        if (!cam) { hideAllArrows(); return; }
+
+        var z   = cam.zoom || 1;
+        var cells = cur.player.cells;
+        if (!cells || !cells.length) { hideAllArrows(); return; }
+
+        /* Aktif hücre sayısından fazla ok varsa gizle */
+        for (var j = cells.length; j < arPool.length; j++) {
+          arPool[j].style.display = 'none';
+        }
+
+        for (var i = 0; i < cells.length; i++) {
+          var cell = cells[i];
+          var el   = getArrow(i);
+
+          /* Hedef ekran koordinatları */
+          var tsx = window.innerWidth  / 2 + (cell.x - cam.x) * z;
+          var tsy = window.innerHeight / 2 + (cell.y - cam.y) * z;
+
+          /* İlk karede anında snap, sonraki framelerde lerp 0.10 */
+          if (!arLerp[i]) { arLerp[i] = { x: tsx, y: tsy }; }
+          arLerp[i].x += (tsx - arLerp[i].x) * 0.10;
+          arLerp[i].y += (tsy - arLerp[i].y) * 0.10;
+
+          /* Offset: hücrenin gerçek yarıçapı (ekran pikseli) + küçük boşluk */
+          var cellR  = cell.r || cell.radius || cell.size || 50;
+          var offset = cellR * z + 16;
+
+          el.style.left    = arLerp[i].x + 'px';
+          el.style.top     = (arLerp[i].y - offset) + 'px';
+          el.style.display = 'block';
+        }
+      }
+      requestAnimationFrame(tick);
+
+      /* ── Settings toggle row injection ── */
+      function buildArrowRow() {
+        var row = document.createElement('div');
+        row.id  = 'protonx-arrow-rings-row';
+        row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.07);';
+
+        var label = document.createElement('div');
+        label.className   = 'setting-label';
+        label.textContent = 'ARROW RINGS';
+
+        /* Toggle switch */
+        var toggle = document.createElement('label');
+        toggle.style.cssText = 'position:relative;display:inline-block;width:42px;height:22px;cursor:pointer;flex-shrink:0';
+
+        var inp = document.createElement('input');
+        inp.type    = 'checkbox';
+        inp.checked = arEnabled();
+        inp.style.cssText = 'opacity:0;width:0;height:0;position:absolute';
+
+        var slider = document.createElement('span');
+        slider.style.cssText = [
+          'position:absolute',
+          'inset:0',
+          'border-radius:22px',
+          'transition:background 0.2s',
+          'background:' + (inp.checked ? '#4fc3f7' : 'rgba(255,255,255,0.15)')
+        ].join(';');
+
+        var knob = document.createElement('span');
+        knob.style.cssText = [
+          'position:absolute',
+          'width:16px',
+          'height:16px',
+          'border-radius:50%',
+          'background:#fff',
+          'top:3px',
+          'transition:left 0.2s',
+          'left:' + (inp.checked ? '23px' : '3px')
+        ].join(';');
+
+        function updateVisual() {
+          slider.style.background = inp.checked ? '#4fc3f7' : 'rgba(255,255,255,0.15)';
+          knob.style.left = inp.checked ? '23px' : '3px';
+        }
+
+        inp.addEventListener('change', function() {
+          localStorage.setItem(AR_KEY, inp.checked ? '1' : '0');
+          updateVisual();
+        });
+
+        slider.appendChild(knob);
+        toggle.appendChild(inp);
+        toggle.appendChild(slider);
+
+        row.appendChild(label);
+        row.appendChild(toggle);
+        return row;
+      }
+
+      function tryInjectArrow() {
+        if (document.getElementById('protonx-arrow-rings-row')) return;
+        var existing = document.getElementById('protonx-spawn-secondary-row');
+        if (existing) { existing.parentElement && existing.parentElement.insertBefore(buildArrowRow(), existing); return; }
+        var btns = document.querySelectorAll('.keybind-btn[data-action]');
+        if (!btns.length) return;
+        var container = btns[0].parentElement && btns[0].parentElement.parentElement;
+        if (!container) return;
+        container.appendChild(buildArrowRow());
+      }
+
+      var arObserver = new MutationObserver(tryInjectArrow);
+      arObserver.observe(document.body, { childList: true, subtree: true });
+    })();
+    </script>
+
+</body>
+  <script>
+    // Enhanced virus glow effect for better visibility from far away
+    (function() {
+      var glowEnabled = true;
+      var glowPulse = true;
+      var pulseSpeed = 0.003;
+      
+      function enhanceVirusGlow() {
+        var attempts = 0;
+        var maxAttempts = 50;
+        
+        function tryEnhance() {
+          attempts++;
+          
+          // Wait for app and stage to be ready
+          if (!window.app || !window.app.stage) {
+            if (attempts < maxAttempts) {
+              setTimeout(tryEnhance, 200);
+            }
+            return;
+          }
+          
+          var stage = window.app.stage;
+          var ctx = stage.ctx;
+          
+          if (!ctx) {
+            if (attempts < maxAttempts) {
+              setTimeout(tryEnhance, 200);
+            }
+            return;
+          }
+          
+          console.log('[VIRUS GLOW] Enhancing virus visibility');
+          
+          // Store original drawVirus function if it exists
+          var originalDrawVirus = stage.drawVirusCells;
+          
+          // Override virus drawing to add glow effect
+          if (stage.drawVirusCells) {
+            stage.drawVirusCells = function(cells) {
+              if (!cells || !cells.length) return;
+              
+              var settings = stage.settings || {};
+              var color = settings.virusColor || '#FF1493';
+              var strokeColor = settings.virusStrokeColor || '#FF69B4';
+              var baseOpacity = (100 - (settings.virusTransparency || 60)) / 100;
+              
+              // Calculate pulse effect
+              var pulse = 1;
+              if (glowPulse) {
+                pulse = 1 + Math.sin(performance.now() * pulseSpeed) * 0.15;
+              }
+              
+              // Draw glow layer (larger, semi-transparent) - PERFORMANCE OPTIMIZED
+              ctx.save();
+              ctx.globalAlpha = baseOpacity * 0.5;
+              ctx.shadowColor = color;
+              ctx.shadowBlur = 30 * pulse;
+              ctx.shadowOffsetX = 0;
+              ctx.shadowOffsetY = 0;
+              
+              for (var i = 0; i < cells.length; i++) {
+                var cell = cells[i];
+                if (!cell || cell.destroyed) continue;
+                
+                var pos = stage.matrix.worldToScreen(cell.x, cell.y);
+                var size = cell.size * stage.camera.zoom;
+                
+                if (size < 2) continue;
+                
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, (size + 10) * pulse, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+              }
+              ctx.restore();
+              
+              // Draw main virus layer with inner glow
+              ctx.save();
+              ctx.globalAlpha = baseOpacity;
+              ctx.shadowColor = strokeColor;
+              ctx.shadowBlur = 20 * pulse;
+              
+              for (var i = 0; i < cells.length; i++) {
+                var cell = cells[i];
+                if (!cell || cell.destroyed) continue;
+                
+                var pos = stage.matrix.worldToScreen(cell.x, cell.y);
+                var size = cell.size * stage.camera.zoom;
+                
+                if (size < 2) continue;
+                
+                // Outer glow ring
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, (size + 5) * pulse, 0, Math.PI * 2);
+                ctx.fillStyle = strokeColor;
+                ctx.fill();
+                
+                // Inner core with gradient-like effect
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, size * pulse, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+              }
+              ctx.restore();
+              
+              // Draw center highlight for extra visibility
+              ctx.save();
+              ctx.globalAlpha = baseOpacity * 0.6;
+              ctx.shadowColor = '#FFFFFF';
+              ctx.shadowBlur = 8 * pulse;
+              
+              for (var i = 0; i < cells.length; i++) {
+                var cell = cells[i];
+                if (!cell || cell.destroyed) continue;
+                
+                var pos = stage.matrix.worldToScreen(cell.x, cell.y);
+                var size = cell.size * stage.camera.zoom;
+                
+                if (size < 4) continue;
+                
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, size * 0.5 * pulse, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                ctx.fill();
+              }
+              ctx.restore();
+            };
+          }
+          
+          console.log('[VIRUS GLOW] Enhancement applied - pulsing glow enabled');
+        }
+        
+        // Start trying to enhance after a short delay
+        setTimeout(tryEnhance, 1000);
+      }
+      
+      // Run enhancement when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', enhanceVirusGlow);
+      } else {
+        enhanceVirusGlow();
+      }
+      
+      // Expose toggle function for debugging
+      window.toggleVirusGlow = function() {
+        glowEnabled = !glowEnabled;
+        console.log('[VIRUS GLOW] ' + (glowEnabled ? 'Enabled' : 'Disabled'));
+      };
+      
+      window.toggleVirusPulse = function() {
+        glowPulse = !glowPulse;
+        console.log('[VIRUS GLOW] Pulse ' + (glowPulse ? 'Enabled' : 'Disabled'));
+      };
+    })();
+  </script>
+</html>
